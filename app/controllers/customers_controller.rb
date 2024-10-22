@@ -16,16 +16,31 @@ class CustomersController < ApplicationController
   end
 
   def create
-    @object = Customer.new customer_params
+    @customer = Customer.new customer_params
+
+    if @customer.save
+      redirect_to customers_path, notice: "Cliente cadastrado com sucesso"
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def update
+    if @customer.update customer_params
+      redirect_to customers_path, notice: "Cliente atualizado com sucesso"
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def destroy
   end
 
   private
+
+  def customer_params
+    params.require(:customer).permit(:name, :dob, :mobile_phone, :email)
+  end
 
   def load_customer
     @customer = Customer.find params[:id]
